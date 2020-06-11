@@ -85,7 +85,8 @@ class _HomeState extends State<Home> {
       consumeTapEvents: true,
       onTap: (){
         print("Clidado na area");
-      }
+      },
+      zIndex: 0
     );
 
     polygonsLocal.add(polygon);
