@@ -9,6 +9,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   Completer<GoogleMapController> _controller = Completer();
+  Set<Marker> _marcadores = {};
+  Set<Polygon> _polygons = {};
 
   _onMapCreated(GoogleMapController googleMapController){
     _controller.complete(googleMapController);
@@ -28,6 +30,78 @@ class _HomeState extends State<Home> {
     );
   }
 
+  _carregarMarcadores(){
+    
+    Set<Marker> marcadoresLocal = {};
+
+    Marker marcadorShopping = Marker(
+      markerId: MarkerId("marcador-shopping"),
+      position: LatLng(-28.669245, -49.389718),
+      infoWindow: InfoWindow(
+        title: "Shops"
+      ),
+      icon: BitmapDescriptor.defaultMarkerWithHue(
+        BitmapDescriptor.hueGreen
+      ),
+      //rotation: 45
+      onTap: (){
+        print("clicado");
+      }
+    );
+
+    Marker marcadorSegundo = Marker(
+      markerId: MarkerId("marcador-shopping"),
+      position: LatLng(-28.639245, -49.389714),
+      infoWindow: InfoWindow(
+        title: "Segundo lugar"
+      ),
+      icon: BitmapDescriptor.defaultMarkerWithHue(
+        BitmapDescriptor.hueOrange
+      )
+    );
+    marcadoresLocal.add(marcadorShopping);
+    marcadoresLocal.add(marcadorSegundo);
+
+    setState(() {
+      _marcadores = marcadoresLocal;
+    });
+    
+  }
+
+  _carregarPolygons(){
+    
+    Set<Polygon> polygonsLocal = {};
+
+    Polygon polygon = Polygon(
+      polygonId: PolygonId("polygons1"),
+      fillColor: Colors.green,
+      strokeColor: Colors.red,
+      strokeWidth: 10,
+      points: [
+        LatLng(-28.639245, -49.389714),
+        LatLng(-28.639244, -49.389713),
+        LatLng(-28.639241, -49.389712),
+      ],
+      consumeTapEvents: true,
+      onTap: (){
+        print("Clidado na area");
+      }
+    );
+
+    polygonsLocal.add(polygon);
+    setState(() {
+      _polygons = polygonsLocal;
+    });
+    
+  }
+
+  @override
+  void initState(){
+    super.initState();
+    _carregarMarcadores();
+    _carregarPolygons();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,6 +119,8 @@ class _HomeState extends State<Home> {
           ),
           mapType: MapType.normal,
           onMapCreated: _onMapCreated,
+          markers: _marcadores,
+          polygons: _polygons,
         ),
       ),
     );
