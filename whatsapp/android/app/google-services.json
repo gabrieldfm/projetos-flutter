@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "446314026626",
+    "firebase_url": "https://whatsapp-30143.firebaseio.com",
+    "project_id": "whatsapp-30143",
+    "storage_bucket": "whatsapp-30143.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:446314026626:android:3ac9f764fa845d5c0b069b",
+        "android_client_info": {
+          "package_name": "com.carlosgabriel.whatsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "446314026626-di6pjrb45la4f818ouuqc2jgohgtdd8g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-ylkh04ZbOERDFnXpV7OhONTeRg60N-c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "446314026626-di6pjrb45la4f818ouuqc2jgohgtdd8g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
