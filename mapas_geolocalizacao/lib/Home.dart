@@ -11,6 +11,7 @@ class _HomeState extends State<Home> {
   Completer<GoogleMapController> _controller = Completer();
   Set<Marker> _marcadores = {};
   Set<Polygon> _polygons = {};
+  Set<Polyline> _polylines = {};
 
   _onMapCreated(GoogleMapController googleMapController){
     _controller.complete(googleMapController);
@@ -96,11 +97,41 @@ class _HomeState extends State<Home> {
     
   }
 
+  _carregarPolylines(){
+    
+    Set<Polyline> polylinesLocal = {};
+
+    Polyline polyline = Polyline(
+      polylineId: PolylineId("polyline1"),
+      color: Colors.red,
+      width: 20,
+      startCap: Cap.squareCap,
+      endCap: Cap.roundCap,
+      jointType: JointType.round,
+      points: [
+        LatLng(-28.639245, -49.389714),
+        LatLng(-28.639244, -49.389713),
+        LatLng(-28.639241, -49.389712),
+      ],
+      consumeTapEvents: true,
+      onTap: (){
+        print("Clidado na Polyline");
+      },
+    );
+
+    polylinesLocal.add(polyline);
+    setState(() {
+      _polylines = polylinesLocal;
+    });
+    
+  }
+
   @override
   void initState(){
     super.initState();
     _carregarMarcadores();
     _carregarPolygons();
+    _carregarPolylines();
   }
 
   @override
@@ -122,6 +153,7 @@ class _HomeState extends State<Home> {
           onMapCreated: _onMapCreated,
           markers: _marcadores,
           polygons: _polygons,
+          polylines: _polylines,
         ),
       ),
     );
