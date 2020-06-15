@@ -185,6 +185,18 @@ class _HomeState extends State<Home> {
     }
   }
 
+  _recuperarEnderecoParaLatLong()async{
+    List<Placemark> listaEnderecos = await Geolocator().placemarkFromCoordinates(-28.669245, -49.389718);
+
+    print(listaEnderecos.length.toString());
+
+    if(listaEnderecos != null && listaEnderecos.length > 0){
+      Placemark item = listaEnderecos[0];
+      print(item.administrativeArea.toString());
+      print(item.country.toString());
+    }
+  }
+
   @override
   void initState(){
     super.initState();
@@ -193,7 +205,8 @@ class _HomeState extends State<Home> {
     //_carregarPolylines();
     //_recuperarLocalAtual();
     //_adicionarListenerLocalizacao();
-    _recuperarLocalParaEndereco();
+    //_recuperarLocalParaEndereco();
+    _recuperarEnderecoParaLatLong();
   }
 
   @override
