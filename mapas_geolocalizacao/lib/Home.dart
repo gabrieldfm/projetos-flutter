@@ -173,6 +173,18 @@ class _HomeState extends State<Home> {
     });
   }
 
+  _recuperarLocalParaEndereco()async{
+    List<Placemark> listaEnderecos = await Geolocator().placemarkFromAddress("Tv germano magrin");
+
+    print(listaEnderecos.length.toString());
+
+    if(listaEnderecos != null && listaEnderecos.length > 0){
+      Placemark item = listaEnderecos[0];
+      print(item.administrativeArea.toString());
+      print(item.country.toString());
+    }
+  }
+
   @override
   void initState(){
     super.initState();
@@ -180,7 +192,8 @@ class _HomeState extends State<Home> {
     //_carregarPolygons();
     //_carregarPolylines();
     //_recuperarLocalAtual();
-    _adicionarListenerLocalizacao();
+    //_adicionarListenerLocalizacao();
+    _recuperarLocalParaEndereco();
   }
 
   @override
