@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async';
+import 'package:geolocator/geolocator.dart';
 
 class Mapa extends StatefulWidget {
   @override
@@ -11,6 +12,10 @@ class _MapaState extends State<Mapa> {
 
   Completer<GoogleMapController> _controller = Completer();
   Set<Marker> _marcadores = {};
+  CameraPosition _posicaoCamera = CameraPosition(
+          target: LatLng(-23.55553, -23.55554),
+          zoom: 18
+        );
 
   _onMapCreated(GoogleMapController controller){
     _controller.complete(controller);
@@ -30,6 +35,36 @@ class _MapaState extends State<Mapa> {
     });
   }
 
+  _movimentarCamera()async{
+    GoogleMapController googleMapController = await _controller.future;
+    googleMapController.animateCamera(
+      CameraUpdate.newCameraPosition(
+        _posicaoCamera
+      )
+    );
+  }
+
+  _adicionarListenerLocalizacao(){
+    var geolocator = Geolocator();
+    var locationOptions = LocationOptions(accuracy: LocationAccuracy.high);
+    geolocator.getPositionStream(locationOptions).listen((Position position){
+      setState(() {
+        _posicaoCamera = CameraPosition(
+          target: LatLng(position.latitude, position.longitude),
+          zoom: 18
+        );
+        _movimentarCamera();
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _adicionarListenerLocalizacao();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,10 +74,7 @@ class _MapaState extends State<Mapa> {
       body: GoogleMap(
         markers: _marcadores,
         mapType: MapType.normal,
-        initialCameraPosition: CameraPosition(
-          target: LatLng(-23.55553, -23.55554),
-          zoom: 18
-        ),
+        initialCameraPosition: _posicaoCamera,
         onMapCreated: _onMapCreated,
         onLongPress: _exibirMarcador,
       ),
