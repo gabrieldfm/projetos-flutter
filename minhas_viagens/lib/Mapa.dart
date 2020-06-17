@@ -21,18 +21,26 @@ class _MapaState extends State<Mapa> {
     _controller.complete(controller);
   }
 
-  _exibirMarcador(LatLng latLng){
-    Marker marcador = Marker(
-    markerId: MarkerId("marcador-${latLng.latitude}-${latLng.longitude}"),
-    position: latLng,
-    infoWindow: InfoWindow(
-        title: "Marcador"
-      )
-    );
+  _exibirMarcador(LatLng latLng)async{
 
-    setState(() {
-      _marcadores.add(marcador);
-    });
+    List<Placemark> listaEnderecos = await Geolocator().placemarkFromCoordinates(latLng.latitude, latLng.longitude);
+
+    if(listaEnderecos != null && listaEnderecos.length > 0){
+      Placemark endereco = listaEnderecos[0];
+      String rua = endereco.thoroughfare;
+
+      Marker marcador = Marker(
+      markerId: MarkerId("marcador-${latLng.latitude}-${latLng.longitude}"),
+      position: latLng,
+      infoWindow: InfoWindow(
+          title: rua
+        )
+      );
+
+      setState(() {
+        _marcadores.add(marcador);
+      });
+    }    
   }
 
   _movimentarCamera()async{
