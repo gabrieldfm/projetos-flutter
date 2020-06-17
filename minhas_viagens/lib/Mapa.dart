@@ -21,7 +21,7 @@ class _MapaState extends State<Mapa> {
     _controller.complete(controller);
   }
 
-  _exibirMarcador(LatLng latLng)async{
+  _adicionarMarcador(LatLng latLng)async{
 
     List<Placemark> listaEnderecos = await Geolocator().placemarkFromCoordinates(latLng.latitude, latLng.longitude);
 
@@ -84,7 +84,7 @@ class _MapaState extends State<Mapa> {
         mapType: MapType.normal,
         initialCameraPosition: _posicaoCamera,
         onMapCreated: _onMapCreated,
-        onLongPress: _exibirMarcador,
+        onLongPress: _adicionarMarcador,
       ),
     );
   }
