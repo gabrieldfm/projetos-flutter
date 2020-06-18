@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async';
@@ -16,6 +17,7 @@ class _MapaState extends State<Mapa> {
           target: LatLng(-23.55553, -23.55554),
           zoom: 18
         );
+  Firestore _db = Firestore.instance;
 
   _onMapCreated(GoogleMapController controller){
     _controller.complete(controller);
@@ -39,6 +41,14 @@ class _MapaState extends State<Mapa> {
 
       setState(() {
         _marcadores.add(marcador);
+
+        Map<String, dynamic> viagem = Map();
+        viagem["titulo"] = rua;
+        viagem["latitude"] = latLng.latitude;
+        viagem["longitude"] = latLng.longitude;
+
+        _db.collection("viagens")
+        .add(viagem);
       });
     }    
   }
