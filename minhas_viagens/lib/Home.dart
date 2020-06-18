@@ -14,9 +14,13 @@ class _HomeState extends State<Home> {
   final _controller = StreamController<QuerySnapshot>.broadcast();
   Firestore _db = Firestore.instance;
 
-  _abrirMapa() {}
+  _abrirMapa(String idViagem) {
+    Navigator.push(context, MaterialPageRoute(builder: (_) => Mapa(idViagem: idViagem,)));
+  }
 
-  _excluirViagem() {}
+  _excluirViagem(String idViagem) {
+    _db.collection("viagens").document(idViagem).delete();
+  }
 
   _adicionarLocal() {
     Navigator.push(context, MaterialPageRoute(builder: (_) => Mapa()));
@@ -72,7 +76,7 @@ class _HomeState extends State<Home> {
 
                           return GestureDetector(
                             onTap: () {
-                              _abrirMapa();
+                              _abrirMapa(idViagem);
                             },
                             child: Card(
                               child: ListTile(
@@ -82,7 +86,7 @@ class _HomeState extends State<Home> {
                                   children: <Widget>[
                                     GestureDetector(
                                       onTap: () {
-                                        _excluirViagem();
+                                        _excluirViagem(idViagem);
                                       },
                                       child: Padding(
                                         padding: EdgeInsets.all(8),

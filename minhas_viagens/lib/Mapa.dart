@@ -5,6 +5,11 @@ import 'dart:async';
 import 'package:geolocator/geolocator.dart';
 
 class Mapa extends StatefulWidget {
+
+  String idViagem;
+
+  Mapa({this.idViagem});
+
   @override
   _MapaState createState() => _MapaState();
 }
@@ -76,11 +81,40 @@ class _MapaState extends State<Mapa> {
     });
   }
 
+  _recuperaViagemPorId(String idViagem) async{
+    if (idViagem != null) {
+      DocumentSnapshot documentSnapshot = await _db.collection("viagens")
+        .document(idViagem).get();
+
+      var dados = documentSnapshot.data;
+      String titulo = dados["titulo"];
+      LatLng latLng = LatLng(dados["latitude"], dados["longitude"]);
+
+      setState(() {
+        Marker marcador = Marker(
+          markerId: MarkerId("marcador-${latLng.latitude}-${latLng.longitude}"),
+          position: latLng,
+          infoWindow: InfoWindow(
+              title: titulo
+            )
+        );
+        _marcadores.add(marcador);
+        _posicaoCamera = CameraPosition(
+          target: latLng,
+          zoom: 18
+        );
+        _movimentarCamera();
+      });
+    }else{
+      _adicionarListenerLocalizacao();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-
-    _adicionarListenerLocalizacao();
+    _recuperaViagemPorId(widget.idViagem);
+    
   }
 
   @override
