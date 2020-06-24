@@ -6,6 +6,10 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+  TextEditingController _controllerEmail = TextEditingController();
+  TextEditingController _controllerSenha = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +23,20 @@ class _HomeState extends State<Home> {
         padding: EdgeInsets.all(16),
         child: Center(
           child: SingleChildScrollView(
-            child: Column(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(bottom: 32),
+                  child: Image.asset("imagens/logo.png", width: 200, height: 150,),
+                ),
+                TextField(
+                  controller: _controllerEmail,
+                  autocorrect: true,
+                  keyboardType: TextInputType.emailAddress,
+                )
+              ],
+            ),
           ),
         ),
       ),
