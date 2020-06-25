@@ -48,7 +48,8 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 TextField(
-                  controller: _controllerEmail,
+                  controller: _controllerSenha,
+                  obscureText: true,
                   keyboardType: TextInputType.emailAddress,
                   style: TextStyle(
                     fontSize: 20
@@ -61,6 +62,21 @@ class _HomeState extends State<Home> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(6)
                     )
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 16, bottom: 10),
+                  child: RaisedButton(
+                    onPressed: (){},
+                    child: Text(
+                      "Entrar",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20
+                      ),
+                    ),
+                    color: Color(0xff1ebbd8),
+                    padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
                   ),
                 )
               ],
