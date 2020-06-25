@@ -78,6 +78,24 @@ class _HomeState extends State<Home> {
                     color: Color(0xff1ebbd8),
                     padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
                   ),
+                ),
+                Center(
+                  child: GestureDetector(
+                    child: Text(
+                      "Não tem conta? cadastre-se",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onTap: (){},
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 16),
+                  child: Center(
+                    child: Text(
+                      "Erro",
+                      style: TextStyle(color: Colors.red, fontSize: 20),
+                    ),
+                  ),
                 )
               ],
             ),
