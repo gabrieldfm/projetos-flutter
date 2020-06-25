@@ -32,8 +32,36 @@ class _HomeState extends State<Home> {
                 ),
                 TextField(
                   controller: _controllerEmail,
-                  autocorrect: true,
+                  autofocus: true,
                   keyboardType: TextInputType.emailAddress,
+                  style: TextStyle(
+                    fontSize: 20
+                  ),
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                    hintText: "e-mail",
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(6)
+                    )
+                  ),
+                ),
+                TextField(
+                  controller: _controllerEmail,
+                  keyboardType: TextInputType.emailAddress,
+                  style: TextStyle(
+                    fontSize: 20
+                  ),
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                    hintText: "senha",
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(6)
+                    )
+                  ),
                 )
               ],
             ),
