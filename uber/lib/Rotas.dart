@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uber/telas/Cadastro.dart';
 import 'package:uber/telas/Home.dart';
 
 class Rotas{
@@ -9,6 +10,10 @@ class Rotas{
         return MaterialPageRoute(
           builder: (_) => Home()
         );
+      case "/cadastro":
+        return MaterialPageRoute(
+            builder: (_) => Cadastro()
+          );
     }
   }
 }
