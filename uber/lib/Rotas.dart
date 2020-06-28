@@ -14,6 +14,19 @@ class Rotas{
         return MaterialPageRoute(
             builder: (_) => Cadastro()
           );
+        default:
+          _erroRota();
     }
+  }
+
+  static Route<dynamic> _erroRota(){
+    return MaterialPageRoute(builder: (_){
+      return Scaffold(
+        appBar: AppBar(title: Text("Tela não encontrada!")),
+        body: Center(
+          child: Text("Tela não encontrada!")
+        )
+      )
+    });
   }
 }
