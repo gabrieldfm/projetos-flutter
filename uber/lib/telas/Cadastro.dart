@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:uber/model/Usuario.dart';
 
 class Cadastro extends StatefulWidget {
   @override
@@ -21,7 +24,13 @@ class _CadastroState extends State<Cadastro> {
     if (nome.isNotEmpty) {
       if (email.isNotEmpty && email.contains("@")) {
         if (senha.isNotEmpty && senha.length > 6) {
-          
+          Usuario usuario = Usuario();
+          usuario.nome = nome;
+          usuario.email = email;
+          usuario.senha = senha;
+          usuario.tipoUsuario = usuario.verificaTipoUsuario(_tipoUsuario);
+
+          _cadastrarUsuario(usuario);
         }else{
           setState(() {
             _msgErro = "Senha inválido";
@@ -38,6 +47,17 @@ class _CadastroState extends State<Cadastro> {
         _msgErro = "Preencha o nome";
       });
     }
+  }
+
+  _cadastrarUsuario(Usuario usuario){
+    FirebaseAuth auth = FirebaseAuth.instance;
+    Firestore db = Firestore.instance;
+    auth.createUserWithEmailAndPassword(email: usuario.email, password: usuario.senha).
+      then((firebaseUser){
+        db.collection("usuarios")
+        .document(firebaseUser.user.uid)
+        .setData(usuario.toMap());
+      });
   }
 
   @override
