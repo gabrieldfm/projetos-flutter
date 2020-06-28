@@ -11,6 +11,34 @@ class _CadastroState extends State<Cadastro> {
   TextEditingController _controllerSenha = TextEditingController();
   TextEditingController _controllerNome = TextEditingController();
   bool _tipoUsuario = false;
+  String _msgErro = "";
+
+  _validarCampos(){
+    String nome = _controllerNome.text;
+    String email = _controllerEmail.text;
+    String senha = _controllerSenha.text;
+
+    if (nome.isNotEmpty) {
+      if (email.isNotEmpty && email.contains("@")) {
+        if (senha.isNotEmpty && senha.length > 6) {
+          
+        }else{
+          setState(() {
+            _msgErro = "Senha inválido";
+          });
+        }
+      }else{
+        setState(() {
+          _msgErro = "E-mail inválido";
+        });
+      }
+      
+    }else{
+      setState(() {
+        _msgErro = "Preencha o nome";
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +123,9 @@ class _CadastroState extends State<Cadastro> {
                 Padding(
                   padding: EdgeInsets.only(top: 16, bottom: 10),
                   child: RaisedButton(
-                    onPressed: (){},
+                    onPressed: (){
+                      _validarCampos();
+                    },
                     child: Text(
                       "Cadastrar",
                       style: TextStyle(
@@ -111,7 +141,7 @@ class _CadastroState extends State<Cadastro> {
                   padding: EdgeInsets.only(top: 16),
                   child: Center(
                     child: Text(
-                      "Erro",
+                      _msgErro,
                       style: TextStyle(color: Colors.red, fontSize: 20),
                     ),
                   ),
