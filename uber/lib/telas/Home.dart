@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:uber/model/Usuario.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -6,20 +8,52 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
   TextEditingController _controllerEmail = TextEditingController();
   TextEditingController _controllerSenha = TextEditingController();
+  String _msgErro = "";
+
+  _validarCampos() {
+    String email = _controllerEmail.text;
+    String senha = _controllerSenha.text;
+
+    if (email.isNotEmpty && email.contains("@")) {
+      if (senha.isNotEmpty && senha.length > 6) {
+        Usuario usuario = Usuario();
+        usuario.email = email;
+        usuario.senha = senha;
+
+        _logarUsuario(usuario);
+      } else {
+        setState(() {
+          _msgErro = "Senha inválido";
+        });
+      }
+    } else {
+      setState(() {
+        _msgErro = "E-mail inválido";
+      });
+    }
+  }
+
+  _logarUsuario(Usuario usuario){
+    FirebaseAuth auth = FirebaseAuth.instance;
+    auth.signInWithEmailAndPassword(email: usuario.email, password: usuario.senha)
+      .then((firebaseUser){
+        Navigator.pushReplacementNamed(context, "/painel-passageiro");
+      }).catchError((error){
+        setState(() {
+          _msgErro = "Falha ao fazer o login";
+        });
+      });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("imagens/fundo.png"),
-            fit: BoxFit.cover
-          )
-        ),
+            image: DecorationImage(
+                image: AssetImage("imagens/fundo.png"), fit: BoxFit.cover)),
         padding: EdgeInsets.all(16),
         child: Center(
           child: SingleChildScrollView(
@@ -28,52 +62,47 @@ class _HomeState extends State<Home> {
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(bottom: 32),
-                  child: Image.asset("imagens/logo.png", width: 200, height: 150,),
+                  child: Image.asset(
+                    "imagens/logo.png",
+                    width: 200,
+                    height: 150,
+                  ),
                 ),
                 TextField(
                   controller: _controllerEmail,
                   autofocus: true,
                   keyboardType: TextInputType.emailAddress,
-                  style: TextStyle(
-                    fontSize: 20
-                  ),
+                  style: TextStyle(fontSize: 20),
                   decoration: InputDecoration(
-                    contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                    hintText: "e-mail",
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(6)
-                    )
-                  ),
+                      contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                      hintText: "e-mail",
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(6))),
                 ),
                 TextField(
                   controller: _controllerSenha,
                   obscureText: true,
                   keyboardType: TextInputType.emailAddress,
-                  style: TextStyle(
-                    fontSize: 20
-                  ),
+                  style: TextStyle(fontSize: 20),
                   decoration: InputDecoration(
-                    contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                    hintText: "senha",
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(6)
-                    )
-                  ),
+                      contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                      hintText: "senha",
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(6))),
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 16, bottom: 10),
                   child: RaisedButton(
-                    onPressed: (){},
+                    onPressed: () {
+                      _validarCampos();
+                    },
                     child: Text(
                       "Entrar",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20
-                      ),
+                      style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                     color: Color(0xff1ebbd8),
                     padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
@@ -85,7 +114,7 @@ class _HomeState extends State<Home> {
                       "Não tem conta? cadastre-se",
                       style: TextStyle(color: Colors.white),
                     ),
-                    onTap: (){
+                    onTap: () {
                       Navigator.pushNamed(context, "/cadastro");
                     },
                   ),
@@ -94,7 +123,7 @@ class _HomeState extends State<Home> {
                   padding: EdgeInsets.only(top: 16),
                   child: Center(
                     child: Text(
-                      "Erro",
+                      _msgErro,
                       style: TextStyle(color: Colors.red, fontSize: 20),
                     ),
                   ),

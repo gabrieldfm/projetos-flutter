@@ -68,6 +68,10 @@ class _CadastroState extends State<Cadastro> {
               "/painel-passageiro", (_) => false);
             break;
         }
+      }).catchError((error){
+        setState(() {
+        _msgErro = "Falha ao cadastrar usuário";
+        });
       });
   }
 
