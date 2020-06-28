@@ -57,6 +57,17 @@ class _CadastroState extends State<Cadastro> {
         db.collection("usuarios")
         .document(firebaseUser.user.uid)
         .setData(usuario.toMap());
+
+        switch (usuario.tipoUsuario) {
+          case "motorista":
+            Navigator.pushNamedAndRemoveUntil(context, 
+              "/painel-motorista", (_) => false);
+            break;
+          case "passageiro":
+            Navigator.pushNamedAndRemoveUntil(context, 
+              "/painel-passageiro", (_) => false);
+            break;
+        }
       });
   }
 
