@@ -26,7 +26,7 @@ class Rotas{
         body: Center(
           child: Text("Tela não encontrada!")
         )
-      )
+      );
     });
   }
 }
