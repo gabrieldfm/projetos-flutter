@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:uber/model/Usuario.dart';
@@ -39,12 +40,30 @@ class _HomeState extends State<Home> {
     FirebaseAuth auth = FirebaseAuth.instance;
     auth.signInWithEmailAndPassword(email: usuario.email, password: usuario.senha)
       .then((firebaseUser){
-        Navigator.pushReplacementNamed(context, "/painel-passageiro");
+        _redirecionaPorTipoUsuario(firebaseUser.user.uid);
       }).catchError((error){
         setState(() {
           _msgErro = "Falha ao fazer o login";
         });
       });
+  }
+
+  _redirecionaPorTipoUsuario(String idUsuario)async{
+    Firestore db = Firestore.instance;
+    DocumentSnapshot snapshot = await  db.collection("usuarios")
+      .document(idUsuario).get();
+
+    Map<String, dynamic> dados = snapshot.data;
+    String tipoUsuario = dados["tipoUsuario"];
+
+    switch (tipoUsuario) {
+      case "motorista":
+        Navigator.pushReplacementNamed(context, "/painel-motorista");
+        break;
+      case "passageiro":
+        Navigator.pushReplacementNamed(context, "/painel-passageiro");
+        break;
+    }
   }
 
   @override
