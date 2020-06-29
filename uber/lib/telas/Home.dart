@@ -12,6 +12,7 @@ class _HomeState extends State<Home> {
   TextEditingController _controllerEmail = TextEditingController();
   TextEditingController _controllerSenha = TextEditingController();
   String _msgErro = "";
+  bool _carregando = false;
 
   _validarCampos() {
     String email = _controllerEmail.text;
@@ -37,6 +38,9 @@ class _HomeState extends State<Home> {
   }
 
   _logarUsuario(Usuario usuario){
+    setState(() {
+      _carregando = true;
+    });
     FirebaseAuth auth = FirebaseAuth.instance;
     auth.signInWithEmailAndPassword(email: usuario.email, password: usuario.senha)
       .then((firebaseUser){
@@ -55,6 +59,9 @@ class _HomeState extends State<Home> {
 
     Map<String, dynamic> dados = snapshot.data;
     String tipoUsuario = dados["tipoUsuario"];
+    setState(() {
+      _carregando = false;
+    });
 
     switch (tipoUsuario) {
       case "motorista":
@@ -64,6 +71,22 @@ class _HomeState extends State<Home> {
         Navigator.pushReplacementNamed(context, "/painel-passageiro");
         break;
     }
+  }
+
+  _verificaUsuarioLogado()async{
+    FirebaseAuth auth = FirebaseAuth.instance;
+    FirebaseUser usuario = await auth.currentUser();
+
+    if (usuario != null) {
+      String idUsuario = usuario.uid;
+      _redirecionaPorTipoUsuario(idUsuario);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _verificaUsuarioLogado();
   }
 
   @override
@@ -138,6 +161,12 @@ class _HomeState extends State<Home> {
                     },
                   ),
                 ),
+                _carregando ?
+                  Center(
+                    child: CircularProgressIndicator(
+                      backgroundColor: Colors.white,
+                    ),
+                  ) : Container(),
                 Padding(
                   padding: EdgeInsets.only(top: 16),
                   child: Center(
