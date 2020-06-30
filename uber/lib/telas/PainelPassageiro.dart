@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'dart:async';
 
 class PainelPassageiro extends StatefulWidget {
   @override
@@ -8,6 +10,7 @@ class PainelPassageiro extends StatefulWidget {
 
 class _PainelPassageiroState extends State<PainelPassageiro> {
   List<String> itensMenu = ["Deslogar", "Configurações"];
+  Completer<GoogleMapController> _controller = Completer();
 
   _escolhaItemMenu(String escolha){
     switch (escolha) {
