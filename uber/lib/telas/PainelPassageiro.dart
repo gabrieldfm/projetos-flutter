@@ -28,6 +28,10 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
     Navigator.pushReplacementNamed(context, "/");
   }
 
+  _onMapCreated(GoogleMapController controller){
+    _controller.complete(controller);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,7 +51,16 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
           )
         ],
       ),
-      body: Container(),
+      body: Container(
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(
+            target: LatLng(-26.0000,-240000),
+            zoom: 16
+          ),
+          onMapCreated: _onMapCreated,
+          mapType: MapType.normal,
+        ),
+      ),
     );
   }
 }
