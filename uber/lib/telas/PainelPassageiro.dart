@@ -101,10 +101,19 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
         ],
       ),
       body: Container(
-        child: GoogleMap(
-          initialCameraPosition: _posicaoCamera,
-          onMapCreated: _onMapCreated,
-          mapType: MapType.normal,
+        child: Stack(
+          children: <Widget>[
+            GoogleMap(
+              initialCameraPosition: _posicaoCamera,
+              onMapCreated: _onMapCreated,
+              mapType: MapType.normal,
+              myLocationEnabled: true,
+              myLocationButtonEnabled: false,
+            ),
+            Positioned(
+              child: null,
+            )
+          ],
         ),
       ),
     );
