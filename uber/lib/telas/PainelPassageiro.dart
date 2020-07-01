@@ -35,6 +35,22 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
     _controller.complete(controller);
   }
 
+  _adicionarListenerLocalizacao(){
+    var geolocator = Geolocator();
+    var locationOptions = LocationOptions(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 10
+    );
+
+    geolocator.getPositionStream(locationOptions).listen((Position position){
+      _posicaoCamera = CameraPosition(
+          target: LatLng(position.latitude, position.longitude),
+          zoom: 19
+        );
+      _movimentarCamera(_posicaoCamera);
+    });
+  }
+
   _recuperarUltimaLocalizacaoConhecida()async{
     Position position = await Geolocator()
       .getLastKnownPosition(desiredAccuracy: LocationAccuracy.high);
@@ -62,6 +78,7 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
   void initState() {
     super.initState();
     _recuperarUltimaLocalizacaoConhecida();
+    _adicionarListenerLocalizacao();
   }
 
   @override
