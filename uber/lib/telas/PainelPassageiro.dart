@@ -111,7 +111,27 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
               myLocationButtonEnabled: false,
             ),
             Positioned(
-              child: null,
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Padding(
+                padding: EdgeInsets.all(10),
+                child: Container(
+                  height: 50,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(3),
+                    color: Colors.white
+                  ),
+                  child: TextField(
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      icon: Icon(Icons.location_on)
+                    ),
+                  ),
+                ),
+              ),
             )
           ],
         ),
