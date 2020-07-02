@@ -16,6 +16,7 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
   CameraPosition _posicaoCamera = CameraPosition(
             target: LatLng(-26.0000,-240000));
   Set<Marker> _marcadores = {};
+  TextEditingController _controllerDestino = TextEditingController(text: "Tv Germano Magrin");
 
   _escolhaItemMenu(String escolha){
     switch (escolha) {
@@ -101,6 +102,19 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
     
   }
 
+  _chamarUber()async{
+    String enderecoDestino = _controllerDestino.text;
+
+    if (enderecoDestino.isNotEmpty) {
+      List<Placemark> listaEnderecos = await Geolocator()
+        .placemarkFromAddress(enderecoDestino);
+      
+      if (listaEnderecos != null && listaEnderecos.length > 0) {
+        Placemark endereco = listaEnderecos[0];
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -184,6 +198,7 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
                     color: Colors.white
                   ),
                   child: TextField(
+                    controller: _controllerDestino,
                     decoration: InputDecoration(
                       icon: Container(
                         margin: EdgeInsets.only(left: 20),
@@ -207,9 +222,10 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
                 padding: Platform.isIOS ? EdgeInsets.fromLTRB(20, 10, 20, 25) : EdgeInsets.all(10),
                 child: RaisedButton(
                     onPressed: () {
+                      _chamarUber();
                     },
                     child: Text(
-                      "Cahamr uber",
+                      "Cahamar uber",
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                     color: Color(0xff1ebbd8),
