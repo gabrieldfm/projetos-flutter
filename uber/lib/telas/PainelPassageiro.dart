@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
+import 'dart:io';
 
 class PainelPassageiro extends StatefulWidget {
   @override
@@ -168,6 +169,24 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
                       contentPadding: EdgeInsets.only(left: 15, top: 16)
                     ),
                   ),
+                ),
+              ),
+            ),
+            Positioned(
+              right: 0,
+              left: 0,
+              bottom: 0,
+              child: Padding(
+                padding: Platform.isIOS ? EdgeInsets.fromLTRB(20, 10, 20, 25) : EdgeInsets.all(10),
+                child: RaisedButton(
+                    onPressed: () {
+                    },
+                    child: Text(
+                      "Cahamr uber",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    color: Color(0xff1ebbd8),
+                    padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
                 ),
               ),
             )
