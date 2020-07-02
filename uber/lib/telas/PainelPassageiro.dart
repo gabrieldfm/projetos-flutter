@@ -5,6 +5,8 @@ import 'dart:async';
 import 'package:geolocator/geolocator.dart';
 import 'dart:io';
 
+import 'package:uber/model/Destino.dart';
+
 class PainelPassageiro extends StatefulWidget {
   @override
   _PainelPassageiroState createState() => _PainelPassageiroState();
@@ -111,6 +113,45 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
       
       if (listaEnderecos != null && listaEnderecos.length > 0) {
         Placemark endereco = listaEnderecos[0];
+        Destino destino = Destino();
+
+        destino.cidade = endereco.administrativeArea;
+        destino.cep = endereco.postalCode;
+        destino.bairro = endereco.subLocality;
+        destino.rua = endereco.thoroughfare;
+        destino.numero = endereco.subThoroughfare;
+        destino.latitude = endereco.position.latitude;
+        destino.longitude = endereco.position.longitude;
+
+        String enderecoConfirmacao;
+        enderecoConfirmacao = "\n Cidade: " + destino.cidade;
+        enderecoConfirmacao = "\n Rua: " + destino.rua + ", " + destino.numero;
+        enderecoConfirmacao = "\n Bairro: " + destino.bairro;
+        enderecoConfirmacao = "\n Cep: " + destino.cep;
+
+        showDialog(
+          context: context,
+          builder: (context){
+            return AlertDialog(
+              title: Text("Confirmação do endereço"),
+              content: Text(enderecoConfirmacao),
+              contentPadding: EdgeInsets.all(16),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("Cancelar", style: TextStyle(color: Colors.red),),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                FlatButton(
+                  child: Text("Confirmar", style: TextStyle(color: Colors.green),),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            );
+          }
+        );
+        
       }
     }
   }
