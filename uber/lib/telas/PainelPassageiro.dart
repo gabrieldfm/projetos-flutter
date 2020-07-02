@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -6,6 +7,10 @@ import 'package:geolocator/geolocator.dart';
 import 'dart:io';
 
 import 'package:uber/model/Destino.dart';
+import 'package:uber/model/Requisicao.dart';
+import 'package:uber/model/Usuario.dart';
+import 'package:uber/util/StatusRequisicao.dart';
+import 'package:uber/util/UsuarioFirebase.dart';
 
 class PainelPassageiro extends StatefulWidget {
   @override
@@ -144,6 +149,7 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
                 FlatButton(
                   child: Text("Confirmar", style: TextStyle(color: Colors.green),),
                   onPressed: () {
+                    _salvarRequisicao(destino);
                     Navigator.pop(context);
                   },
                 ),
@@ -154,6 +160,19 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
         
       }
     }
+  }
+
+  _salvarRequisicao(Destino destino)async{
+    Usuario passageiro = await UsuarioFirebase.getDadosUsuarioLogado();
+
+    Requisicao requisicao = Requisicao();
+    requisicao.destino;
+    requisicao.passageiro = passageiro;
+    requisicao.status = StatusRequisicao.AGUARDANDO;
+
+    Firestore db = Firestore.instance;
+    db.collection("requisicoes")
+      .add(requisicao.toMap());
   }
 
   @override
