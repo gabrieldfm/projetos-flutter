@@ -15,6 +15,7 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
   Completer<GoogleMapController> _controller = Completer();
   CameraPosition _posicaoCamera = CameraPosition(
             target: LatLng(-26.0000,-240000));
+  Set<Marker> _marcadores = {};
 
   _escolhaItemMenu(String escolha){
     switch (escolha) {
@@ -44,6 +45,8 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
     );
 
     geolocator.getPositionStream(locationOptions).listen((Position position){
+      _exibirMarcadorPassageiro(position);
+      
       _posicaoCamera = CameraPosition(
           target: LatLng(position.latitude, position.longitude),
           zoom: 19
@@ -58,6 +61,7 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
 
     setState(() {
       if(position != null){
+        _exibirMarcadorPassageiro(position);
         _posicaoCamera = CameraPosition(
           target: LatLng(position.latitude, position.longitude),
           zoom: 19
@@ -73,6 +77,28 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
     googleMapController.animateCamera(
       CameraUpdate.newCameraPosition(cameraPosition)
     );
+  }
+
+  _exibirMarcadorPassageiro(Position local)async{
+    double pixelRatio = MediaQuery.of(context).devicePixelRatio;
+
+    BitmapDescriptor.fromAssetImage(
+        ImageConfiguration(devicePixelRatio: pixelRatio),
+        "imagens/passageiro.png"
+      ).then((BitmapDescriptor icone){
+        Marker marcadorPassageiro = Marker(
+          markerId: MarkerId("marcador-passageiro"),
+          position: LatLng(local.latitude, local.longitude),
+          infoWindow: InfoWindow(
+            title: "Meu local"
+          ),
+          icon: icone
+        );
+        setState(() {
+          _marcadores.add(marcadorPassageiro);
+        });
+      });
+    
   }
 
   @override
@@ -108,8 +134,9 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
               initialCameraPosition: _posicaoCamera,
               onMapCreated: _onMapCreated,
               mapType: MapType.normal,
-              myLocationEnabled: true,
+              //myLocationEnabled: true,
               myLocationButtonEnabled: false,
+              markers: _marcadores,
             ),
             Positioned(
               top: 0,
