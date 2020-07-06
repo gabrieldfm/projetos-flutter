@@ -172,13 +172,40 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
 
     Firestore db = Firestore.instance;
     db.collection("requisicoes").add(requisicao.toMap());
+
+    _statusAguardando();
   }
+
+  _alterarBotaPrincipal(String texto, Color cor, Function funcao){
+    setState(() {
+      _textoBotao = texto;
+      _corBotao = cor;
+      _funcaoBotao = funcao;
+    });
+  }
+
+  _statusUberNaoChamado(){
+    _exibirCaixaEndDestino = true;
+    _alterarBotaPrincipal("Chamar uber", Color(0xff1ebbd8), (){
+      _chamarUber();
+    });
+  }
+
+  _statusAguardando(){
+    _exibirCaixaEndDestino = false;
+    _alterarBotaPrincipal("Cancelar", Colors.red, (){
+      _cancelarUber();
+    });
+  }
+
+  _cancelarUber(){}
 
   @override
   void initState() {
     super.initState();
     _recuperarUltimaLocalizacaoConhecida();
     _adicionarListenerLocalizacao();
+    _statusUberNaoChamado();
   }
 
   @override
