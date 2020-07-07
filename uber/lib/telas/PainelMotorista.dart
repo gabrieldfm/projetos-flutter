@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +12,8 @@ class PainelMotorista extends StatefulWidget {
 class _PainelMotoristaState extends State<PainelMotorista> {
 
   List<String> itensMenu = ["Deslogar", "Configurações"];
+  final _controller = StreamController<QuerySnapshot>.broadcast();
+  Firestore db = Firestore.instance;
 
   _escolhaItemMenu(String escolha){
     switch (escolha) {
@@ -24,6 +29,17 @@ class _PainelMotoristaState extends State<PainelMotorista> {
     FirebaseAuth auth = FirebaseAuth.instance;
     await auth.signOut();
     Navigator.pushReplacementNamed(context, "/");
+  }
+
+  Stream<QuerySnapshot> _adicionarListenerRequisicoes(){
+    //db.collection("requisicoes")
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _adicionarListenerRequisicoes();
   }
 
   @override
@@ -45,7 +61,10 @@ class _PainelMotoristaState extends State<PainelMotorista> {
           )
         ],
       ),
-      body: Container(),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: null,
+        builder: (context, snapshot){},
+      ),
     );
   }
 }
