@@ -103,8 +103,29 @@ class _PainelMotoristaState extends State<PainelMotorista> {
               } else {
                 QuerySnapshot querySnapshot = snapshot.data;
                 if (querySnapshot.documents.length == 0) {
-                  
+                  return mensagemSemDados;
                 }else{
+                  return ListView.separated(
+                    itemBuilder: (context, indice){
+                      List<DocumentSnapshot> requisicoes = querySnapshot.documents.toList();
+                      DocumentSnapshot item = requisicoes[indice];
+
+                      String idRequisicao = item["id"];
+                      String nomePassageiro = item["passageiro"]["nome"];
+                      String rua = item["destino"]["rua"];
+                      String numero = item["destino"]["numero"];
+
+                      return ListTile(
+                        title: Text(nomePassageiro),
+                        subtitle: Text("destino: $rua, $numero"),
+                      );
+                    }, 
+                    separatorBuilder: (context, indice) => Divider(
+                      height: 2,
+                      color: Colors.grey,
+                    ), 
+                    itemCount: querySnapshot.documents.length
+                  );
 
                 }
               }
