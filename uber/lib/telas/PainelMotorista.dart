@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:uber/util/StatusRequisicao.dart';
 
 class PainelMotorista extends StatefulWidget {
   @override
@@ -32,7 +33,13 @@ class _PainelMotoristaState extends State<PainelMotorista> {
   }
 
   Stream<QuerySnapshot> _adicionarListenerRequisicoes(){
-    //db.collection("requisicoes")
+    final stream = db.collection("requisicoes")
+      .where("status", isEqualTo: StatusRequisicao.AGUARDANDO)
+      .snapshots();
+
+    stream.listen((dados){
+      _controller.add(dados);
+    });
   }
 
   @override
