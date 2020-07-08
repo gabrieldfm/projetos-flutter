@@ -51,6 +51,16 @@ class _PainelMotoristaState extends State<PainelMotorista> {
 
   @override
   Widget build(BuildContext context) {
+
+    var mensagemCarregando = Center(
+      child: Column(
+        children: <Widget>[
+          Text("Carregando requisições"),
+          CircularProgressIndicator()
+        ],
+      ),
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text("painel motorista"),
@@ -69,8 +79,19 @@ class _PainelMotoristaState extends State<PainelMotorista> {
         ],
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: null,
-        builder: (context, snapshot){},
+        stream: _controller.stream,
+        builder: (context, snapshot){
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+            case ConnectionState.waiting:
+              return mensagemCarregando;
+              break;
+            case ConnectionState.active:
+            case ConnectionState.done:
+              
+              break;
+          }
+        },
       ),
     );
   }
