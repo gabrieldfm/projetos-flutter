@@ -61,6 +61,16 @@ class _PainelMotoristaState extends State<PainelMotorista> {
       ),
     );
 
+    var mensagemSemDados = Center(
+      child: Text(
+        "Você não tem nenhuma requisição",
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold
+        ),
+      )
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text("painel motorista"),
@@ -88,7 +98,16 @@ class _PainelMotoristaState extends State<PainelMotorista> {
               break;
             case ConnectionState.active:
             case ConnectionState.done:
-              
+              if (snapshot.hasError) {
+                return Text("Erro ao carregar os dados");
+              } else {
+                QuerySnapshot querySnapshot = snapshot.data;
+                if (querySnapshot.documents.length == 0) {
+                  
+                }else{
+
+                }
+              }
               break;
           }
         },
