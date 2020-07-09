@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,6 +20,19 @@ class _CorridaState extends State<Corrida> {
   CameraPosition _posicaoCamera =
       CameraPosition(target: LatLng(-26.0000, -240000));
   Set<Marker> _marcadores = {};
+
+  //Controles
+  String _textoBotao = "Aceitar corrida";
+  Color _corBotao = Color(0xff1ebbd8);
+  Function _funcaoBotao;
+
+  _alterarBotaPrincipal(String texto, Color cor, Function funcao){
+    setState(() {
+      _textoBotao = texto;
+      _corBotao = cor;
+      _funcaoBotao = funcao;
+    });
+  }
 
   _onMapCreated(GoogleMapController controller) {
     _controller.complete(controller);
@@ -86,8 +100,43 @@ class _CorridaState extends State<Corrida> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("painel motorista"),
+      ),
+      body: Container(
+        child: Stack(
+          children: <Widget>[
+            GoogleMap(
+              initialCameraPosition: _posicaoCamera,
+              onMapCreated: _onMapCreated,
+              mapType: MapType.normal,
+              //myLocationEnabled: true,
+              myLocationButtonEnabled: false,
+              markers: _marcadores,
+            ),
+            Positioned(
+              right: 0,
+              left: 0,
+              bottom: 0,
+              child: Padding(
+                padding: Platform.isIOS
+                    ? EdgeInsets.fromLTRB(20, 10, 20, 25)
+                    : EdgeInsets.all(10),
+                child: RaisedButton(
+                  onPressed: _funcaoBotao,
+                  child: Text(
+                    _textoBotao,
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                  color: _corBotao,
+                  padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
