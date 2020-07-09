@@ -9,6 +9,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:uber/util/StatusRequisicao.dart';
 
 class Corrida extends StatefulWidget {
+  String idRequisicao;
+
+  Corrida(this.idRequisicao);
+
   @override
   _CorridaState createState() => _CorridaState();
 }
