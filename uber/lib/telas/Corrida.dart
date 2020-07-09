@@ -95,11 +95,23 @@ class _CorridaState extends State<Corrida> {
     });
   }
 
+  _recuperarRequisicao()async{
+
+    String idRequisicao = widget.idRequisicao;
+    Firestore db = Firestore.instance;
+
+    DocumentSnapshot documentSnapshot = await db.collection("requisicoes")
+      .document(idRequisicao)
+      .get();
+  }
+
   @override
   void initState() {
     super.initState();
     _recuperarUltimaLocalizacaoConhecida();
     _adicionarListenerLocalizacao();
+
+    _recuperarRequisicao();
   }
 
   @override
