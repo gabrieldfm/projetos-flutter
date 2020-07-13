@@ -23,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
         usuario.email = email;
         usuario.senha = senha;
 
-        //_logarUsuario(usuario);
+        _logarUsuario();
       } else {
         setState(() {
           _msgErro = "Senha inválido";
@@ -34,6 +34,11 @@ class _LoginPageState extends State<LoginPage> {
         _msgErro = "E-mail inválido";
       });
     }
+  }
+
+  _logarUsuario(){
+
+    Navigator.pushReplacementNamed(context, "/home");
   }
 
   @override
