@@ -132,7 +132,7 @@ class _CorridaState extends State<Corrida> {
               _statusAguardando();
               break;
             case StatusRequisicao.A_CAMINHO:
-              
+              _statusaCaminho();
               break;
             case StatusRequisicao.VIAGEM:
               
@@ -165,10 +165,29 @@ class _CorridaState extends State<Corrida> {
         {
           "motorista" : motorista.toMap(),
           "status" : StatusRequisicao.A_CAMINHO,
-
         }
-      );
+      ).then((_) {
+        String idPassageiro = _dadosRequisicao["passageiro"]["idUsuario"];
+        db.collection("requisicao_ativa")
+          .document(idPassageiro)
+          .updateData({
+            "status" : StatusRequisicao.A_CAMINHO,
+        });
 
+        String idMotorista = motorista.idUsuario;
+        db.collection("requisicao_ativa_motorista")
+          .document(idMotorista)
+          .setData({
+            "id_requisicao" : idRequisicao,
+            "id_usuario" : idMotorista,
+            "status" : StatusRequisicao.A_CAMINHO,
+        });
+      });
+
+  }
+
+  _statusaCaminho(){
+    _alterarBotaPrincipal("A caminho do passageiro", Colors.grey, null);
   }
 
   @override
