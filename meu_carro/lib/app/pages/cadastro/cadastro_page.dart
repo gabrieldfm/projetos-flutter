@@ -8,12 +8,16 @@ class CadastroPage extends StatefulWidget {
 
 class _CadastroPageState extends State<CadastroPage> {
   TextEditingController _controllerEmail = TextEditingController();
+  TextEditingController _controllerTelefone = TextEditingController();
+  TextEditingController _controllerCidade = TextEditingController();
   TextEditingController _controllerSenha = TextEditingController();
   TextEditingController _controllerNome = TextEditingController();
   String _msgErro = "";
 
   _validarCampos(){
     String nome = _controllerNome.text;
+    String telefone = _controllerTelefone.text;
+    String cidade = _controllerCidade.text;
     String email = _controllerEmail.text;
     String senha = _controllerSenha.text;
 
@@ -79,7 +83,40 @@ class _CadastroPageState extends State<CadastroPage> {
                   ),
                 ),
                 TextField(
-                  controller: _controllerEmail,
+                  controller: _controllerTelefone,
+                  keyboardType: TextInputType.phone,
+                  style: TextStyle(
+                    fontSize: 20
+                  ),
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                    hintText: "telefone",
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(6)
+                    )
+                  ),
+                ),
+                TextField(
+                  controller: _controllerNome,
+                  autofocus: true,
+                  keyboardType: TextInputType.text,
+                  style: TextStyle(
+                    fontSize: 20
+                  ),
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
+                    hintText: "cidade",
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(6)
+                    )
+                  ),
+                ),
+                TextField(
+                  controller: _controllerCidade,
                   keyboardType: TextInputType.emailAddress,
                   style: TextStyle(
                     fontSize: 20

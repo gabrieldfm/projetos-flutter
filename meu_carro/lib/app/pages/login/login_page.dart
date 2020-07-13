@@ -106,6 +106,16 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ),
                 ),
+                Center(
+                  child: GestureDetector(
+                    child: Text(
+                      "Recuperar senha",
+                      style: TextStyle(color: Colors.black, fontSize: 17),
+                    ),
+                    onTap: () {
+                    },
+                  ),
+                ),
                 _carregando ?
                   Center(
                     child: CircularProgressIndicator(
