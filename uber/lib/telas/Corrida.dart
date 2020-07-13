@@ -24,6 +24,7 @@ class _CorridaState extends State<Corrida> {
   CameraPosition _posicaoCamera =
       CameraPosition(target: LatLng(-26.0000, -240000));
   Set<Marker> _marcadores = {};
+  Map<String, dynamic> _dadosRequisicao;
 
   //Controles
   String _textoBotao = "Aceitar corrida";
@@ -103,7 +104,47 @@ class _CorridaState extends State<Corrida> {
     DocumentSnapshot documentSnapshot = await db.collection("requisicoes")
       .document(idRequisicao)
       .get();
+
+    _dadosRequisicao = documentSnapshot.data;
+    _adicionarListenerRequisicao();
   }
+
+  _adicionarListenerRequisicao() async{
+    Firestore db = Firestore.instance;
+    String idRequisicao = _dadosRequisicao["id"];
+    await db.collection("requisicoes")
+      .document(idRequisicao)
+      .snapshots()
+      .listen((snapshot) { 
+        if (snapshot.data != null) {
+          Map<String, dynamic> dados = snapshot.data;
+          String status = dados["status"];
+
+          switch (status) {
+            case StatusRequisicao.AGUARDANDO:
+              _statusAguardando();
+              break;
+            case StatusRequisicao.A_CAMINHO:
+              
+              break;
+            case StatusRequisicao.VIAGEM:
+              
+              break;
+            case StatusRequisicao.FINALIZADA:
+              
+              break;
+          }
+        }
+      });
+  }
+
+  _statusAguardando(){
+    _alterarBotaPrincipal("Aceitar corrida", Color(0xff1ebbd8), (){
+      _aceitarCorrida();
+    });
+  }
+  
+  _aceitarCorrida(){}
 
   @override
   void initState() {
