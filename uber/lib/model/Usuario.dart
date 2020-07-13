@@ -5,13 +5,18 @@ class Usuario {
   String _senha;
   String _tipoUsuario;
 
+  double _latitude;
+  double _longitude;
+
   Usuario();
 
   Map<String, dynamic> toMap(){
     Map<String, dynamic> map ={
       "nome": this.nome,
       "email": this.email,
-      "tipoUsuario": this.tipoUsuario
+      "tipoUsuario": this.tipoUsuario,
+      "latitude": this.latitude,
+      "longitude": this.longitude,
     };
     return map;
   }
@@ -39,4 +44,12 @@ class Usuario {
   String get tipoUsuario => _tipoUsuario;
 
   set tipoUsuario(String value) => _tipoUsuario = value;
+
+  double get latitude => _latitude;
+
+  set latitude(double value) => _latitude = value;
+
+  double get longitude => _longitude;
+
+  set longitude(double value) => _longitude = value;
 }

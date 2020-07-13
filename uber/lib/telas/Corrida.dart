@@ -6,7 +6,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:uber/model/Usuario.dart';
 import 'package:uber/util/StatusRequisicao.dart';
+import 'package:uber/util/UsuarioFirebase.dart';
 
 class Corrida extends StatefulWidget {
   String idRequisicao;
@@ -25,6 +27,7 @@ class _CorridaState extends State<Corrida> {
       CameraPosition(target: LatLng(-26.0000, -240000));
   Set<Marker> _marcadores = {};
   Map<String, dynamic> _dadosRequisicao;
+  Position _localMotorista;
 
   //Controles
   String _textoBotao = "Aceitar corrida";
@@ -54,6 +57,9 @@ class _CorridaState extends State<Corrida> {
       _posicaoCamera = CameraPosition(
           target: LatLng(position.latitude, position.longitude), zoom: 19);
       _movimentarCamera(_posicaoCamera);
+      setState(() {
+        _localMotorista = position;
+      });
     });
   }
 
@@ -68,6 +74,7 @@ class _CorridaState extends State<Corrida> {
             target: LatLng(position.latitude, position.longitude), zoom: 19);
 
         _movimentarCamera(_posicaoCamera);
+        _localMotorista = position;
       }
     });
   }
@@ -144,7 +151,25 @@ class _CorridaState extends State<Corrida> {
     });
   }
   
-  _aceitarCorrida(){}
+  _aceitarCorrida()async{
+    String idRequisicao = _dadosRequisicao["id"];
+    Firestore db = Firestore.instance;
+
+    Usuario motorista = await UsuarioFirebase.getDadosUsuarioLogado();
+    motorista.latitude = _localMotorista.latitude;
+    motorista.longitude = _localMotorista.longitude;
+
+    db.collection("requisicoes")
+      .document(idRequisicao)
+      .updateData(
+        {
+          "motorista" : motorista.toMap(),
+          "status" : StatusRequisicao.A_CAMINHO,
+
+        }
+      );
+
+  }
 
   @override
   void initState() {
