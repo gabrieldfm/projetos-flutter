@@ -26,6 +26,7 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
   TextEditingController _controllerDestino =
       TextEditingController(text: "Tv Germano Magrin");
   String _idRequisicao;
+  Position _localPassageiro;
 
   //Controles
   bool _exibirCaixaEndDestino = true;
@@ -63,6 +64,7 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
 
       _posicaoCamera = CameraPosition(
           target: LatLng(position.latitude, position.longitude), zoom: 19);
+      _localPassageiro = position;
       _movimentarCamera(_posicaoCamera);
     });
   }
@@ -77,6 +79,7 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
         _posicaoCamera = CameraPosition(
             target: LatLng(position.latitude, position.longitude), zoom: 19);
 
+        _localPassageiro = position;
         _movimentarCamera(_posicaoCamera);
       }
     });
@@ -165,6 +168,8 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
 
   _salvarRequisicao(Destino destino) async {
     Usuario passageiro = await UsuarioFirebase.getDadosUsuarioLogado();
+    passageiro.latitude = _localPassageiro.latitude;
+    passageiro.longitude = _localPassageiro.longitude;
 
     Requisicao requisicao = Requisicao();
     requisicao.destino;
