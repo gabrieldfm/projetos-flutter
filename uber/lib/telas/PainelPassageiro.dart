@@ -75,12 +75,7 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
 
     setState(() {
       if (position != null) {
-        _exibirMarcadorPassageiro(position);
-        _posicaoCamera = CameraPosition(
-            target: LatLng(position.latitude, position.longitude), zoom: 19);
-
-        _localPassageiro = position;
-        _movimentarCamera(_posicaoCamera);
+        
       }
     });
   }
@@ -177,20 +172,23 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
     requisicao.status = StatusRequisicao.AGUARDANDO;
 
     Firestore db = Firestore.instance;
-    db.collection("requisicoes").document(requisicao.id)
-      .setData(requisicao.toMap());
+    db
+        .collection("requisicoes")
+        .document(requisicao.id)
+        .setData(requisicao.toMap());
 
     Map<String, dynamic> dadosRequisicaoAtiva = {};
     dadosRequisicaoAtiva["id_requisicao"] = requisicao.id;
     dadosRequisicaoAtiva["id_usuario"] = passageiro.idUsuario;
     dadosRequisicaoAtiva["status"] = StatusRequisicao.AGUARDANDO;
 
-    db.collection("requisicao_ativa").document(passageiro.idUsuario)
-      .setData(dadosRequisicaoAtiva);
-    
+    db
+        .collection("requisicao_ativa")
+        .document(passageiro.idUsuario)
+        .setData(dadosRequisicaoAtiva);
   }
 
-  _alterarBotaPrincipal(String texto, Color cor, Function funcao){
+  _alterarBotaPrincipal(String texto, Color cor, Function funcao) {
     setState(() {
       _textoBotao = texto;
       _corBotao = cor;
@@ -198,78 +196,88 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
     });
   }
 
-  _statusUberNaoChamado(){
+  _statusUberNaoChamado() {
     _exibirCaixaEndDestino = true;
-    _alterarBotaPrincipal("Chamar uber", Color(0xff1ebbd8), (){
+    _alterarBotaPrincipal("Chamar uber", Color(0xff1ebbd8), () {
       _chamarUber();
     });
   }
 
-  _statusAguardando(){
+  _statusAguardando() {
     _exibirCaixaEndDestino = false;
-    _alterarBotaPrincipal("Cancelar", Colors.red, (){
+    _alterarBotaPrincipal("Cancelar", Colors.red, () {
       _cancelarUber();
     });
   }
 
-  _statusaCaminho(){
+  _statusaCaminho() {
     _exibirCaixaEndDestino = false;
-    _alterarBotaPrincipal("Motorista a caminho", Colors.grey, (){});
+    _alterarBotaPrincipal("Motorista a caminho", Colors.grey, () {});
   }
 
-  _cancelarUber()async{
+  _cancelarUber() async {
     FirebaseUser firebaseUser = await UsuarioFirebase.getUsuarioAtual();
     Firestore db = Firestore.instance;
 
-    db.collection("requisicoes")
-      .document(_idRequisicao).updateData({
-        "status":StatusRequisicao.CANCELADA
-      }).then((_){
-        db.collection("requisicao_ativa")
-          .document(firebaseUser.uid)
-          .delete();
-      });
-
+    db
+        .collection("requisicoes")
+        .document(_idRequisicao)
+        .updateData({"status": StatusRequisicao.CANCELADA}).then((_) {
+      db.collection("requisicao_ativa").document(firebaseUser.uid).delete();
+    });
   }
 
-  _adicionarListenerRequisicaoAtiva()async{
+  _recuperarRequisicaoAtiva() async {
     FirebaseUser firebaseUser = await UsuarioFirebase.getUsuarioAtual();
+    Firestore db = Firestore.instance;
+    DocumentSnapshot documentSnapshot = await db
+        .collection("requisicao_ativa")
+        .document(firebaseUser.uid)
+        .get();
+
+    if (documentSnapshot.data != null) {
+      Map<String, dynamic> dados = documentSnapshot.data;
+      _idRequisicao = dados["id_requisicao"];
+      _adicionarListenerRequisicao(_idRequisicao);
+    } else {
+      _statusUberNaoChamado();
+    }
+  }
+
+  _adicionarListenerRequisicao(String idRequisicao) async {
     Firestore db = Firestore.instance;
     await db.collection("requisicao_ativa")
-      .document(firebaseUser.uid).snapshots()
-      .listen((snapshot){
-        if (snapshot.data != null) {
-          Map<String, dynamic> dados = snapshot.data;
-          String status = dados["status"];
-          _idRequisicao = dados["id_requisicao"];
+        .document(idRequisicao)
+        .snapshots()
+        .listen((snapshot) {
+      if (snapshot.data != null) {
+        Map<String, dynamic> dados = snapshot.data;
+        String status = dados["status"];
+        _idRequisicao = dados["id_requisicao"];
 
-          switch (status) {
-            case StatusRequisicao.AGUARDANDO:
-              _statusAguardando();
-              break;
-            case StatusRequisicao.A_CAMINHO:
-              _statusaCaminho();
-              break;
-            case StatusRequisicao.VIAGEM:
-              
-              break;
-            case StatusRequisicao.FINALIZADA:
-              
-              break;
-          }
-        } else {
-          _statusUberNaoChamado();
+        switch (status) {
+          case StatusRequisicao.AGUARDANDO:
+            _statusAguardando();
+            break;
+          case StatusRequisicao.A_CAMINHO:
+            _statusaCaminho();
+            break;
+          case StatusRequisicao.VIAGEM:
+            break;
+          case StatusRequisicao.FINALIZADA:
+            break;
         }
-      });
+      }
+    });
   }
 
   @override
   void initState() {
     super.initState();
+    _recuperarRequisicaoAtiva();
+
     _recuperarUltimaLocalizacaoConhecida();
     _adicionarListenerLocalizacao();
-
-    _adicionarListenerRequisicaoAtiva();
   }
 
   @override
