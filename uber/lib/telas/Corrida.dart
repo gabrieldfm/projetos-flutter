@@ -58,12 +58,13 @@ class _CorridaState extends State<Corrida> {
         if (_idRequisicao != null && _idRequisicao.isNotEmpty) {
           if (_statusRequisicao != StatusRequisicao.AGUARDANDO) {
             UsuarioFirebase.atualizarDadosLocalizacao(
-              _idRequisicao, position.latitude, position.longitude);
+                _idRequisicao, position.latitude, position.longitude);
+          } else {
+            setState(() {
+              _localMotorista = position;
+            });
+            _statusAguardando();
           }
-        } else if (position != null) {
-          setState(() {
-            _localMotorista = position;
-          });
         }
       }
     });
@@ -141,16 +142,18 @@ class _CorridaState extends State<Corrida> {
       _aceitarCorrida();
     });
 
-    double motoristaLat = _localMotorista.latitude;
-    double motoristaLon = _localMotorista.longitude;
-    Position position =
-        Position(latitude: motoristaLat, longitude: motoristaLon);
+    if (_localMotorista != null) {
+      double motoristaLat = _localMotorista.latitude;
+      double motoristaLon = _localMotorista.longitude;
+      Position position =
+          Position(latitude: motoristaLat, longitude: motoristaLon);
 
-    _exibirMarcador(position, "imagens/motorista.png", "Motorista");
+      _exibirMarcador(position, "imagens/motorista.png", "Motorista");
 
-    CameraPosition cameraPosition = CameraPosition(
-        target: LatLng(position.latitude, position.longitude), zoom: 19);
-    _movimentarCamera(cameraPosition);
+      CameraPosition cameraPosition = CameraPosition(
+          target: LatLng(position.latitude, position.longitude), zoom: 19);
+      _movimentarCamera(cameraPosition);
+    }
   }
 
   _aceitarCorrida() async {
@@ -158,8 +161,8 @@ class _CorridaState extends State<Corrida> {
     Firestore db = Firestore.instance;
 
     Usuario motorista = await UsuarioFirebase.getDadosUsuarioLogado();
-    motorista.latitude = _dadosRequisicao["motorista"]["latitude"];
-    motorista.longitude = _dadosRequisicao["motorista"]["longitude"];
+    motorista.latitude = _localMotorista.latitude;
+    motorista.longitude = _localMotorista.longitude;
 
     db.collection("requisicoes").document(idRequisicao).updateData({
       "motorista": motorista.toMap(),
@@ -218,7 +221,28 @@ class _CorridaState extends State<Corrida> {
         southwest: LatLng(sLat, sLon), northeast: LatLng(nLat, nLon)));
   }
 
-  _iniciarCorrida() {}
+  _iniciarCorrida() {
+    Firestore db = Firestore.instance;
+    db.collection("requisicoes").document(_idRequisicao).updateData({
+      "origem": {
+        "latitude": _dadosRequisicao["motorista"]["latitude"],
+        "longitude": _dadosRequisicao["motorista"]["longitude"]
+      },
+      "status": StatusRequisicao.VIAGEM
+    });
+
+    String idPassageiro = _dadosRequisicao["passageiro"]["idUsuario"];
+    db
+        .collection("requisicao_ativa")
+        .document(idPassageiro)
+        .updateData({"status": StatusRequisicao.VIAGEM});
+
+    String idMotorista = _dadosRequisicao["motorista"]["idUsuario"];
+    db
+        .collection("requisicao_ativa_motorista")
+        .document(idMotorista)
+        .updateData({"status": StatusRequisicao.VIAGEM});
+  }
 
   _movimentarCameraBounds(LatLngBounds latLngBounds) async {
     GoogleMapController googleMapController = await _controller.future;

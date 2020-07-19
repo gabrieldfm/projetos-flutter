@@ -28,6 +28,7 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
   String _idRequisicao;
   Position _localPassageiro;
   Map<String, dynamic> _dadosRequisicao;
+  StreamSubscription<DocumentSnapshot> _streamSubscriptionRequisicoes;
 
   //Controles
   bool _exibirCaixaEndDestino = true;
@@ -61,14 +62,14 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
         LocationOptions(accuracy: LocationAccuracy.high, distanceFilter: 10);
 
     geolocator.getPositionStream(locationOptions).listen((Position position) {
-
       if (_idRequisicao != null && _idRequisicao.isNotEmpty) {
-        UsuarioFirebase.atualizarDadosLocalizacao(_idRequisicao, position.latitude, position.longitude);
-        
-      }else if (position != null) {
+        UsuarioFirebase.atualizarDadosLocalizacao(
+            _idRequisicao, position.latitude, position.longitude);
+      } else {
         setState(() {
           _localPassageiro = position;
         });
+        _statusUberNaoChamado();
       }
     });
   }
@@ -78,9 +79,7 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
         .getLastKnownPosition(desiredAccuracy: LocationAccuracy.high);
 
     setState(() {
-      if (position != null) {
-        
-      }
+      if (position != null) {}
     });
   }
 
@@ -191,7 +190,9 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
         .document(passageiro.idUsuario)
         .setData(dadosRequisicaoAtiva);
 
-    _statusAguardando();
+    if (_streamSubscriptionRequisicoes == null) {
+      _adicionarListenerRequisicao(requisicao.id);
+    }
   }
 
   _alterarBotaPrincipal(String texto, Color cor, Function funcao) {
@@ -208,16 +209,18 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
       _chamarUber();
     });
 
-    Position position = Position(
-      latitude: _localPassageiro.latitude, longitude: _localPassageiro.longitude
-    );
+    if (_localPassageiro != null) {
+      Position position = Position(
+          latitude: _localPassageiro.latitude,
+          longitude: _localPassageiro.longitude);
 
-    _exibirMarcadorPassageiro(position);
+      _exibirMarcadorPassageiro(position);
 
-    CameraPosition cameraPosition = CameraPosition(
-        target: LatLng(position.latitude, position.longitude), zoom: 19);
-    
-    _movimentarCamera(cameraPosition);
+      CameraPosition cameraPosition = CameraPosition(
+          target: LatLng(position.latitude, position.longitude), zoom: 19);
+
+      _movimentarCamera(cameraPosition);
+    }
   }
 
   _statusAguardando() {
@@ -229,21 +232,88 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
     double passageiroLat = _dadosRequisicao["passageiro"]["latitude"];
     double passageiroLon = _dadosRequisicao["passageiro"]["longitude"];
 
-    Position position = Position(
-      latitude: passageiroLat, longitude: passageiroLon
-    );
+    Position position =
+        Position(latitude: passageiroLat, longitude: passageiroLon);
 
     _exibirMarcadorPassageiro(position);
 
     CameraPosition cameraPosition = CameraPosition(
         target: LatLng(position.latitude, position.longitude), zoom: 19);
-    
+
     _movimentarCamera(cameraPosition);
   }
 
   _statusaCaminho() {
     _exibirCaixaEndDestino = false;
     _alterarBotaPrincipal("Motorista a caminho", Colors.grey, () {});
+
+    double latitudePassageiro = _dadosRequisicao["passageiro"]["latitude"];
+    double longitudePassageiro = _dadosRequisicao["passageiro"]["longitude"];
+
+    double latitudeMotorista = _dadosRequisicao["motorista"]["latitude"];
+    double longitudeMotorista = _dadosRequisicao["motorista"]["longitude"];
+
+    _exibirDoisMarcadores(LatLng(latitudeMotorista, longitudeMotorista),
+        LatLng(latitudePassageiro, longitudePassageiro));
+
+    var nLat, nLon, sLat, sLon;
+    if (latitudeMotorista <= latitudePassageiro) {
+      sLat = latitudeMotorista;
+      nLat = latitudePassageiro;
+    } else {
+      sLat = latitudePassageiro;
+      nLat = latitudeMotorista;
+    }
+
+    if (longitudeMotorista <= longitudePassageiro) {
+      sLon = longitudeMotorista;
+      nLon = longitudePassageiro;
+    } else {
+      sLon = longitudePassageiro;
+      nLon = longitudeMotorista;
+    }
+
+    _movimentarCameraBounds(LatLngBounds(
+        southwest: LatLng(sLat, sLon), northeast: LatLng(nLat, nLon)));
+  }
+
+  _movimentarCameraBounds(LatLngBounds latLngBounds) async {
+    GoogleMapController googleMapController = await _controller.future;
+    googleMapController
+        .animateCamera(CameraUpdate.newLatLngBounds(latLngBounds, 100));
+  }
+
+  _exibirDoisMarcadores(LatLng motorista, LatLng passageiro) {
+    double pixelRatio = MediaQuery.of(context).devicePixelRatio;
+    Set<Marker> _listaMarcadores = {};
+
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(devicePixelRatio: pixelRatio),
+            "imagens/motorista.png")
+        .then((BitmapDescriptor icone) {
+      Marker marcadorMotorista = Marker(
+          markerId: MarkerId("marcador-motorista"),
+          position: LatLng(motorista.latitude, motorista.longitude),
+          infoWindow: InfoWindow(title: "Local motorista"),
+          icon: icone);
+      _listaMarcadores.add(marcadorMotorista);
+    });
+
+    BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(devicePixelRatio: pixelRatio),
+            "imagens/passageiro.png")
+        .then((BitmapDescriptor icone) {
+      Marker marcadorPassageiro = Marker(
+          markerId: MarkerId("marcador-passageiro"),
+          position: LatLng(passageiro.latitude, passageiro.longitude),
+          infoWindow: InfoWindow(title: "Local passageiro"),
+          icon: icone);
+      _listaMarcadores.add(marcadorPassageiro);
+    });
+
+    setState(() {
+      _marcadores = _listaMarcadores;
+    });
   }
 
   _cancelarUber() async {
@@ -277,7 +347,8 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
 
   _adicionarListenerRequisicao(String idRequisicao) async {
     Firestore db = Firestore.instance;
-    await db.collection("requisicao_ativa")
+    _streamSubscriptionRequisicoes = await db
+        .collection("requisicao_ativa")
         .document(idRequisicao)
         .snapshots()
         .listen((snapshot) {
@@ -438,5 +509,11 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _streamSubscriptionRequisicoes.cancel();
   }
 }
