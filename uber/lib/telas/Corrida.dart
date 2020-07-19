@@ -271,9 +271,8 @@ class _CorridaState extends State<Corrida> {
     super.initState();
     _adicionarListenerRequisicao();
 
-    _recuperarUltimaLocalizacaoConhecida();
+    //_recuperarUltimaLocalizacaoConhecida();
     _adicionarListenerLocalizacao();    
-    //_recuperarRequisicao();
   }
 
   @override
