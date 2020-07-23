@@ -132,9 +132,27 @@ class _CorridaState extends State<Corrida> {
             _statusaEmviagem();
             break;
           case StatusRequisicao.FINALIZADA:
+            _statusFinalizada();
             break;
         }
       }
+    });
+  }
+
+  _confirmarCorrida(){}
+
+  _statusFinalizada()async{
+    double latitudeDestino = _dadosRequisicao["destino"]["latitude"];
+    double longitudeDestino = _dadosRequisicao["destino"]["longitude"];
+
+    double latitudeOrigem = _dadosRequisicao["origem"]["latitude"];
+    double longitudeOrigem = _dadosRequisicao["origem"]["longitude"];
+
+    double distanciaEmMetros = await Geolocator().distanceBetween(latitudeOrigem, longitudeOrigem, latitudeDestino, longitudeDestino);
+
+    _msgStatus = "Viagem finalizada";
+    _alterarBotaPrincipal("Confirmar - ", Color(0xff1ebbd8), () {
+      _confirmarCorrida();
     });
   }
 
@@ -222,7 +240,25 @@ class _CorridaState extends State<Corrida> {
         southwest: LatLng(sLat, sLon), northeast: LatLng(nLat, nLon)));
   }
 
-  _finalizarCorrida(){}
+  _finalizarCorrida(){
+    Firestore db = Firestore.instance;
+    db.collection("requisicoes")
+      .document(_idRequisicao)
+      .updateData({
+        "status" : StatusRequisicao.FINALIZADA
+      });
+
+    
+    String idPassageiro = _dadosRequisicao["passageiro"]["idUsuario"];
+    db.collection("requisicao_ativa")
+        .document(idPassageiro)
+        .updateData({"status": StatusRequisicao.FINALIZADA});
+
+    String idMotorista = _dadosRequisicao["motorista"]["idUsuario"];
+    db.collection("requisicao_ativa_motorista")
+        .document(idMotorista)
+        .updateData({"status": StatusRequisicao.FINALIZADA});
+  }
 
   _statusaEmviagem() {
     _msgStatus = "Em viagem";
