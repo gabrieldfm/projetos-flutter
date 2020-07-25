@@ -181,7 +181,7 @@ class _CorridaState extends State<Corrida> {
     _alterarBotaPrincipal("Confirmar - R\$ $valorViagemFormatado", Color(0xff1ebbd8), () {
       _confirmarCorrida();
     });
-
+    _marcadores = {};
     Position position =
           Position(latitude: latitudeDestino, longitude: longitudeDestino);
 

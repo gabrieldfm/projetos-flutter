@@ -390,6 +390,7 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
 
     _alterarBotaPrincipal("Total - R\$ $valorViagemFormatado", Colors.green, () {});
 
+    _marcadores = {};
     Position position =
           Position(latitude: latitudeDestino, longitude: longitudeDestino);
 
