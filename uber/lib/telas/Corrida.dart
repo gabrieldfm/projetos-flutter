@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:uber/model/Usuario.dart';
 import 'package:uber/util/StatusRequisicao.dart';
 import 'package:uber/util/UsuarioFirebase.dart';
@@ -150,8 +151,14 @@ class _CorridaState extends State<Corrida> {
 
     double distanciaEmMetros = await Geolocator().distanceBetween(latitudeOrigem, longitudeOrigem, latitudeDestino, longitudeDestino);
 
+    double distanciaKm = distanciaEmMetros / 1000;
+    double valorViagem = distanciaKm * 8;
+
+    var f = new NumberFormat("#,##0.00", "pt_BR");
+    var valorViagemFormatado = f.format(valorViagem);
+
     _msgStatus = "Viagem finalizada";
-    _alterarBotaPrincipal("Confirmar - ", Color(0xff1ebbd8), () {
+    _alterarBotaPrincipal("Confirmar - R\$ $valorViagemFormatado", Color(0xff1ebbd8), () {
       _confirmarCorrida();
     });
   }
