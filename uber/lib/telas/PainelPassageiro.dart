@@ -419,6 +419,18 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
     });
   }
 
+  _statusConfirmada(){
+    if(_streamSubscriptionRequisicoes != null){
+      _streamSubscriptionRequisicoes.cancel();
+      _exibirCaixaEndDestino = true;
+      _alterarBotaPrincipal("Chamar uber", Color(0xff1ebbd8), (){
+        _chamarUber();
+      });
+
+      _dadosRequisicao = {};
+    }
+  }
+
   _adicionarListenerRequisicao(String idRequisicao) async {
     Firestore db = Firestore.instance;
     _streamSubscriptionRequisicoes = await db
@@ -444,6 +456,9 @@ class _PainelPassageiroState extends State<PainelPassageiro> {
             break;
           case StatusRequisicao.FINALIZADA:
             _statusFinalizada();
+            break;
+          case StatusRequisicao.CONFIRMADA:
+            _statusConfirmada();
             break;
         }
       }
