@@ -6,23 +6,27 @@ class AnimacaoImplicita extends StatefulWidget {
 }
 
 class _AnimacaoImplicitaState extends State<AnimacaoImplicita> {
+
+  bool _status = true;
+
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Container(
+        AnimatedContainer(
           padding: EdgeInsets.all(20),
-          width: 200,
-          height: 200,
-          color: Colors.purpleAccent,
+          width: _status ? 200 : 300,
+          height: _status ? 300 : 200,
+          color: _status ? Colors.white : Colors.purpleAccent,
+          duration: Duration(seconds: 2),
           child: Image.asset("imagens/logo.png"),
         ),
         RaisedButton(
           child: Text("Alterar"),
           onPressed: () {
             setState(() {
-              
+              _status = !_status;
             });
           },
         )
