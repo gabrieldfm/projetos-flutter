@@ -21,6 +21,7 @@ class _AnimacaoImplicitaState extends State<AnimacaoImplicita> {
           color: _status ? Colors.white : Colors.purpleAccent,
           duration: Duration(seconds: 2),
           child: Image.asset("imagens/logo.png"),
+          curve: Curves.bounceIn,
         ),
         RaisedButton(
           child: Text("Alterar"),
