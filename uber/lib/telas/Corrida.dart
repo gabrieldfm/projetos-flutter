@@ -135,12 +135,32 @@ class _CorridaState extends State<Corrida> {
           case StatusRequisicao.FINALIZADA:
             _statusFinalizada();
             break;
+          case StatusRequisicao.CONFIRMADA:
+            _statusConfirmada();
+            break;
         }
       }
     });
   }
 
-  _confirmarCorrida(){}
+  _confirmarCorrida(){
+    Firestore db = Firestore.instance;
+    db.collection("requisicoes").document(_idRequisicao).updateData({
+      "status": StatusRequisicao.CONFIRMADA
+    });
+
+    String idPassageiro = _dadosRequisicao["passageiro"]["idUsuario"];
+    db
+        .collection("requisicao_ativa")
+        .document(idPassageiro)
+        .delete();
+
+    String idMotorista = _dadosRequisicao["motorista"]["idUsuario"];
+    db
+        .collection("requisicao_ativa_motorista")
+        .document(idMotorista)
+        .delete();
+  }
 
   _statusFinalizada()async{
     double latitudeDestino = _dadosRequisicao["destino"]["latitude"];
@@ -161,6 +181,20 @@ class _CorridaState extends State<Corrida> {
     _alterarBotaPrincipal("Confirmar - R\$ $valorViagemFormatado", Color(0xff1ebbd8), () {
       _confirmarCorrida();
     });
+
+    Position position =
+          Position(latitude: latitudeDestino, longitude: longitudeDestino);
+
+    _exibirMarcador(position, "imagens/passageiro.png", "Destino");
+
+    CameraPosition cameraPosition = CameraPosition(
+        target: LatLng(position.latitude, position.longitude), zoom: 19);
+    _movimentarCamera(cameraPosition);
+
+  }
+
+  _statusConfirmada(){
+    Navigator.pushReplacementNamed(context, "/painel-motorista");
   }
 
   _statusAguardando() {
