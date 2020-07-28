@@ -72,7 +72,7 @@ class _CriandoAnimacoesBasicasState extends State<CriandoAnimacoesBasicas> {
               Align(
                 alignment: Alignment.center,
                 child: AnimatedOpacity(
-                  duration: Duration(milliseconds: 100),
+                  duration: Duration(milliseconds: 200),
                   opacity: _status ? 0 : 1,
                   child: Text("Mensagem", style: TextStyle(color: Colors.white, fontSize: 20),),
                 ),
