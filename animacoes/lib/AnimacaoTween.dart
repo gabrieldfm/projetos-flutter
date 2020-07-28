@@ -6,6 +6,12 @@ class AnimacaoTween extends StatefulWidget {
 }
 
 class _AnimacaoTweenState extends State<AnimacaoTween> {
+
+  static final ColorTween _colorTween = ColorTween(
+          begin: Colors.white,
+          end: Colors.orange
+        );
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -40,16 +46,14 @@ class _AnimacaoTweenState extends State<AnimacaoTween> {
 
       child: TweenAnimationBuilder(
         duration: Duration(seconds: 2),
-        tween: ColorTween(
-          begin: Colors.white,
-          end: Colors.orange
-        ),
+        tween: _colorTween,
+        child: Image.asset("imagens/logo.png"),
         builder: (BuildContext context, Color valor, Widget widget){
           return ColorFiltered(
             colorFilter: ColorFilter.mode(
               valor, BlendMode.overlay
             ),
-            child: Image.asset("imagens/logo.png"),
+            child: widget,
           );
         },
       )
