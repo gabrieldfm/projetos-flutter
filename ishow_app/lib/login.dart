@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:ishow_app/botaoAnimado.dart';
 import 'package:ishow_app/inputCustomizado.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
 
@@ -105,7 +106,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                           ),
                           decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(20),
                               boxShadow: [
                                 BoxShadow(
                                     color: Colors.grey[200],
@@ -118,30 +119,8 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                     SizedBox(
                       height: 20,
                     ),
-                    AnimatedBuilder(
-                      animation: _animacaoSize,
-                      builder: (context, widget) {
-                        return InkWell(
-                          onTap: () {},
-                          child: Container(
-                            height: 50,
-                            width: _animacaoSize.value,
-                            child: Center(
-                              child: Text(
-                                "Entrar",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
-                              ),
-                            ),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                gradient: LinearGradient(colors: [
-                                  Color.fromRGBO(255, 100, 127, 1),
-                                  Color.fromRGBO(255, 123, 145, 1),
-                                ])),
-                          ),
-                        );
-                      },
+                    BotaoAnimado(
+                      controller: _controller,
                     ),
                     SizedBox(
                       height: 10,
