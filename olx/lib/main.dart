@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:olx/home.dart';
+import 'package:olx/views/home.dart';
+
 
 final ThemeData temaPadrao = ThemeData(
   primaryColor: Color(0xff9c27b0),

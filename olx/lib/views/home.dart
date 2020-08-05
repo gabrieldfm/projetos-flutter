@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:olx/views/input_customizado.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -6,6 +7,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+  TextEditingController _controllerEmail = TextEditingController();
+  TextEditingController _controllerSenha = TextEditingController();
   bool _cadastrar = false;
 
   @override
@@ -25,35 +29,16 @@ class _HomeState extends State<Home> {
                   padding: EdgeInsets.only(bottom: 32),
                   child: Image.asset("imagens/logo.png", width: 200, height: 150,),
                 ),
-                TextField(
+                InputCustomizado(
+                  controller: _controllerEmail,
+                  hint: "E-mail",
                   autofocus: true,
-                  keyboardType: TextInputType.emailAddress,
-                  style: TextStyle(
-                    fontSize: 20
-                  ),
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                    hintText: "E-mail",
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(6)
-                    )
-                  ),
+                  type: TextInputType.emailAddress,
                 ),
-                TextField(
-                  obscureText: true,
-                  keyboardType: TextInputType.text,
-                  style: TextStyle(
-                    fontSize: 20
-                  ),
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
-                    hintText: "Senha",
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(6)
-                    )
-                  ),
+                InputCustomizado(
+                  controller: _controllerSenha,
+                  hint: "Senha",
+                  obscure: true,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
