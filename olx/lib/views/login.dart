@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:olx/models/usuario.dart';
 import 'package:olx/views/input_customizado.dart';
 
-class Home extends StatefulWidget {
+class Login extends StatefulWidget {
   @override
-  _HomeState createState() => _HomeState();
+  _LoginState createState() => _LoginState();
 }
 
-class _HomeState extends State<Home> {
+class _LoginState extends State<Login> {
 
   TextEditingController _controllerEmail = TextEditingController();
   TextEditingController _controllerSenha = TextEditingController();
@@ -20,7 +20,7 @@ class _HomeState extends State<Home> {
     FirebaseAuth auth = FirebaseAuth.instance;
     auth.createUserWithEmailAndPassword(email: usuario.email, password: usuario.senha)
       .then((firebaseUser) {
-
+        Navigator.pushReplacementNamed(context, "/");
       });
   }
 
@@ -28,7 +28,7 @@ class _HomeState extends State<Home> {
     FirebaseAuth auth = FirebaseAuth.instance;
     auth.signInWithEmailAndPassword(email: usuario.email, password: usuario.senha)
       .then((firebaseUser) {
-        
+        Navigator.pushReplacementNamed(context, "/");
       });
   }
 
