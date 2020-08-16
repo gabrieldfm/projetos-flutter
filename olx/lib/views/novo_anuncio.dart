@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:olx/views/widgets/botao_customizado.dart';
+import 'package:validadores/Validador.dart';
 
 class NovoAnuncio extends StatefulWidget {
   @override
@@ -12,7 +14,11 @@ class NovoAnuncio extends StatefulWidget {
 class _NovoAnuncioState extends State<NovoAnuncio> {
 
   List<File> _listaImagens = List();
+  List<DropdownMenuItem<String>> _listaEstados = List();
+  List<DropdownMenuItem<String>> _listaCategoria = List();
   final _formKey = GlobalKey<FormState>();
+  String _itemSelecionadoEstado;
+  String _itemSelecionadoCategoria;
 
   _selecionarImagem()async{
     //metodo obsoleto
@@ -21,6 +27,52 @@ class _NovoAnuncioState extends State<NovoAnuncio> {
     if (imagemSelecionada != null) {
       _listaImagens.add(imagemSelecionada);
     }
+  }
+
+  _carregarItensDropDown(){
+
+    _listaCategoria.add(
+      DropdownMenuItem(
+        child: Text("Automóvel"),
+        value: "auto",
+      )
+    );
+
+    _listaCategoria.add(
+      DropdownMenuItem(
+        child: Text("Imóvel"),
+        value: "imovel",
+      )
+    );
+
+    _listaCategoria.add(
+      DropdownMenuItem(
+        child: Text("Eletronicos"),
+        value: "eletro",
+      )
+    );
+
+    _listaCategoria.add(
+      DropdownMenuItem(
+        child: Text("Espotes"),
+        value: "esporte",
+      )
+    );
+
+    for (var estado in Estados.listaEstadosAbrv) {
+      _listaEstados.add(
+        DropdownMenuItem(
+          child: Text(estado),
+          value: estado,
+        )
+      );
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarItensDropDown();
   }
 
   @override
@@ -145,8 +197,50 @@ class _NovoAnuncioState extends State<NovoAnuncio> {
                 ),
                 Row(
                   children: <Widget>[
-                    Text("Estado"),
-                    Text("Categoria"),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.all(8),
+                        child: DropdownButtonFormField(
+                          value: _itemSelecionadoEstado,
+                          hint: Text("Estados"),
+                          validator: (value) {
+                            return Validador().add(Validar.OBRIGATORIO, msg: "Campo obrigatório").valido(value);
+                          },
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20
+                          ),
+                          items: _listaEstados,
+                          onChanged: (value) {
+                            setState(() {
+                              _itemSelecionadoEstado = value;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.all(8),
+                        child: DropdownButtonFormField(
+                          value: _itemSelecionadoCategoria,
+                          hint: Text("Categoria"),
+                          validator: (value) {
+                            return Validador().add(Validar.OBRIGATORIO, msg: "Campo obrigatório").valido(value);
+                          },
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20
+                          ),
+                          items: _listaCategoria,
+                          onChanged: (value) {
+                            setState(() {
+                              _itemSelecionadoCategoria = value;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
                   ],
                 ),
                 Text("Caixa de texto"),
