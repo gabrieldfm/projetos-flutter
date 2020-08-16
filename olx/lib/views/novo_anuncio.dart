@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:olx/views/widgets/botao_customizado.dart';
+import 'package:olx/views/widgets/input_customizado.dart';
 import 'package:validadores/Validador.dart';
 
 class NovoAnuncio extends StatefulWidget {
@@ -243,7 +245,56 @@ class _NovoAnuncioState extends State<NovoAnuncio> {
                     ),
                   ],
                 ),
-                Text("Caixa de texto"),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 15, top: 15),
+                  child: InputCustomizado(
+                    hint: "Titulo",
+                    validator: (valor){
+                      return Validador().add(Validar.OBRIGATORIO, msg: "Campo obrigatório").valido(valor);
+                    },
+                  )
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 15),
+                  child: InputCustomizado(
+                    hint: "Preço",
+                    type: TextInputType.number,
+                    inputFormatters: [
+                      WhitelistingTextInputFormatter.digitsOnly,
+                      RealInputFormatter(centavos: true)
+                    ],
+                    validator: (valor){
+                      return Validador().add(Validar.OBRIGATORIO, msg: "Campo obrigatório").valido(valor);
+                    },
+                  )
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 15),
+                  child: InputCustomizado(
+                    hint: "Teloefone",
+                    type: TextInputType.phone,
+                    inputFormatters: [
+                      WhitelistingTextInputFormatter.digitsOnly,
+                      TelefoneInputFormatter()
+                    ],
+                    validator: (valor){
+                      return Validador().add(Validar.OBRIGATORIO, msg: "Campo obrigatório").valido(valor);
+                    },
+                  )
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 15),
+                  child: InputCustomizado(
+                    hint: "Descrição",
+                    maxLines: null,
+                    validator: (valor){
+                      return Validador()
+                        .add(Validar.OBRIGATORIO, msg: "Campo obrigatório")
+                        .maxLength(200, msg: "Maximo de 200 caracteres")
+                        .valido(valor);
+                    },
+                  )
+                ),
                 BotaoCustomizado(
                   texto: "Cadastrar anúncio",
                   onPressed: (){
