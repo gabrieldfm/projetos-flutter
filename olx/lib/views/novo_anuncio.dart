@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:brasil_fields/brasil_fields.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,6 +26,7 @@ class _NovoAnuncioState extends State<NovoAnuncio> {
   String _itemSelecionadoEstado;
   String _itemSelecionadoCategoria;
   Anuncio _anuncio;
+  BuildContext _dialogContext;
 
   _selecionarImagem()async{
     //metodo obsoleto
@@ -74,8 +77,42 @@ class _NovoAnuncioState extends State<NovoAnuncio> {
     }
   }
 
+  _abrirDialog(BuildContext context){
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              CircularProgressIndicator(),
+              SizedBox(height: 20,),
+              Text("Salvando aunucio")
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   _salvarAnuncio()async{
+    _abrirDialog(_dialogContext);
+
     await _uploadImagens();
+    FirebaseAuth auth = FirebaseAuth.instance;
+    FirebaseUser usuarioLogado = await auth.currentUser();
+    String idUsuario = usuarioLogado.uid;
+
+    Firestore db = Firestore.instance;
+    db.collection("meus_anuncios")
+      .document(idUsuario)
+      .collection("anuncios")
+      .document(_anuncio.id)
+      .setData(_anuncio.toMap()).then((_) {
+        Navigator.pop(_dialogContext);
+        Navigator.pushReplacementNamed(context, "/meus-anuncios");
+      });
   }
 
   Future _uploadImagens()async{
@@ -345,6 +382,8 @@ class _NovoAnuncioState extends State<NovoAnuncio> {
                   onPressed: (){
                     if(_formKey.currentState.validate()){
                       _formKey.currentState.save();
+
+                      _dialogContext = context;
 
                       _salvarAnuncio();
                     }
