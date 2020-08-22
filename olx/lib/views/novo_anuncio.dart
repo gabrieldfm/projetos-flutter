@@ -138,7 +138,7 @@ class _NovoAnuncioState extends State<NovoAnuncio> {
   void initState() {
     super.initState();
     _carregarItensDropDown();
-    _anuncio = Anuncio();
+    _anuncio = Anuncio.gerarId();
   }
 
   @override
