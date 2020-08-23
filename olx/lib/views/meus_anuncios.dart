@@ -72,9 +72,11 @@ class _MeusAnunciosState extends State<MeusAnuncios> {
       appBar: AppBar(
         title: Text("Meus anúncios"),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton.extended(
         foregroundColor: Colors.white,
-        child: Icon(Icons.add),
+        icon: Icon(Icons.add),
+        label: Text("Adicionar"),
         onPressed: (){
           Navigator.pushNamed(context, "/novo-anuncio");
         },
@@ -110,13 +112,13 @@ class _MeusAnunciosState extends State<MeusAnuncios> {
                             content: Text("Deseja realmente excluir o anúncio?"),
                             actions: <Widget>[
                               FlatButton(
-                                child: Text("Cancelar", style: TextStyle(color: Colors.white),),
+                                child: Text("Cancelar", style: TextStyle(color: Colors.grey),),
                                 onPressed: (){
                                   Navigator.of(context).pop();
                                 },
                               ),
                               FlatButton(
-                                child: Text("Remover", style: TextStyle(color: Colors.red),),
+                                child: Text("Remover", style: TextStyle(color: Colors.white),),
                                 onPressed: (){
                                   _removerAnuncio(anuncio.id);
                                   Navigator.of(context).pop();
