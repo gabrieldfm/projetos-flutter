@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:olx/models/anuncio.dart';
+import 'package:olx/util/configuracoes.dart';
 import 'package:olx/views/widgets/botao_customizado.dart';
 import 'package:olx/views/widgets/input_customizado.dart';
 import 'package:validadores/Validador.dart';
@@ -38,43 +39,8 @@ class _NovoAnuncioState extends State<NovoAnuncio> {
   }
 
   _carregarItensDropDown(){
-
-    _listaCategoria.add(
-      DropdownMenuItem(
-        child: Text("Automóvel"),
-        value: "auto",
-      )
-    );
-
-    _listaCategoria.add(
-      DropdownMenuItem(
-        child: Text("Imóvel"),
-        value: "imovel",
-      )
-    );
-
-    _listaCategoria.add(
-      DropdownMenuItem(
-        child: Text("Eletronicos"),
-        value: "eletro",
-      )
-    );
-
-    _listaCategoria.add(
-      DropdownMenuItem(
-        child: Text("Espotes"),
-        value: "esporte",
-      )
-    );
-
-    for (var estado in Estados.listaEstadosAbrv) {
-      _listaEstados.add(
-        DropdownMenuItem(
-          child: Text(estado),
-          value: estado,
-        )
-      );
-    }
+    _listaCategoria = Configuracoes.getCategorias();
+    _listaEstados = Configuracoes.getEstados();
   }
 
   _abrirDialog(BuildContext context){
@@ -110,8 +76,13 @@ class _NovoAnuncioState extends State<NovoAnuncio> {
       .collection("anuncios")
       .document(_anuncio.id)
       .setData(_anuncio.toMap()).then((_) {
-        Navigator.pop(_dialogContext);
-        Navigator.pop(context);
+        db.collection("anuncios")
+          .document(_anuncio.id)
+          .setData(_anuncio.toMap()).then((_) {
+            Navigator.pop(_dialogContext);
+            Navigator.pop(context);
+          });
+        
       });
   }
 

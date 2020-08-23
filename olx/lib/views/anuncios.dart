@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:olx/util/configuracoes.dart';
 
 class Anuncios extends StatefulWidget {
   @override
@@ -8,6 +9,10 @@ class Anuncios extends StatefulWidget {
 
 class _AnunciosState extends State<Anuncios> {
   List<String> itensMenu = [];
+  String _itemSelecionadoEstado;
+  String _itemSelecionadoCategoria;
+  List<DropdownMenuItem<String>> _listaEstados = List();
+  List<DropdownMenuItem<String>> _listaCategoria = List();
 
   _escolhaMenu(String item){
     switch (item) {
@@ -45,10 +50,15 @@ class _AnunciosState extends State<Anuncios> {
     }
   }
 
+  _carregarItensDropDown(){
+    _listaCategoria = Configuracoes.getCategorias();
+    _listaEstados = Configuracoes.getEstados();
+  }
+
   @override
   void initState() {
     super.initState();
-
+    _carregarItensDropDown();
     _verificaUsuarioLogado();
   }
 
@@ -73,7 +83,59 @@ class _AnunciosState extends State<Anuncios> {
         ],
       ),
       body: Container(
-        child: Text("anuncios"),
+        child: Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: DropdownButtonHideUnderline(
+                    child: Center(
+                      child: DropdownButton(
+                        iconEnabledColor: Color(0xff9c27b0),
+                        value: _itemSelecionadoEstado,
+                        items: _listaEstados,
+                        style: TextStyle(
+                          fontSize: 22,
+                          color: Colors.black
+                        ),
+                        onChanged: (estado){
+                          setState(() {
+                            _itemSelecionadoEstado = estado;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  color: Colors.grey[200],
+                  width: 2,
+                  height: 60,
+                ),
+                Expanded(
+                  child: DropdownButtonHideUnderline(
+                    child: Center(
+                      child: DropdownButton(
+                        iconEnabledColor: Color(0xff9c27b0),
+                        value: _itemSelecionadoCategoria,
+                        items: _listaCategoria,
+                        style: TextStyle(
+                          fontSize: 22,
+                          color: Colors.black
+                        ),
+                        onChanged: (categoria){
+                          setState(() {
+                            _itemSelecionadoCategoria = categoria;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
