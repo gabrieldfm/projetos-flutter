@@ -1,6 +1,11 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:olx/models/anuncio.dart';
 import 'package:olx/util/configuracoes.dart';
+import 'package:olx/views/widgets/item_anuncio.dart';
 
 class Anuncios extends StatefulWidget {
   @override
@@ -13,6 +18,7 @@ class _AnunciosState extends State<Anuncios> {
   String _itemSelecionadoCategoria;
   List<DropdownMenuItem<String>> _listaEstados = List();
   List<DropdownMenuItem<String>> _listaCategoria = List();
+  final _controller = StreamController<QuerySnapshot>.broadcast();
 
   _escolhaMenu(String item){
     switch (item) {
@@ -55,11 +61,21 @@ class _AnunciosState extends State<Anuncios> {
     _listaEstados = Configuracoes.getEstados();
   }
 
+  Future<Stream<QuerySnapshot>> _adicionarListenerAnuncios()async{
+    Firestore db = Firestore.instance;
+    Stream<QuerySnapshot> stream = db.collection("anuncios").snapshots();
+
+    stream.listen((dados) {
+      _controller.add(dados);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     _carregarItensDropDown();
     _verificaUsuarioLogado();
+    _adicionarListenerAnuncios();
   }
 
   @override
@@ -131,6 +147,43 @@ class _AnunciosState extends State<Anuncios> {
                       ),
                     ),
                   ),
+                ),
+                StreamBuilder(
+                  stream: _controller.stream,
+                  builder: (context, snapshot){
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.none:
+                      case ConnectionState.waiting:
+                      case ConnectionState.active:
+                      case ConnectionState.done:
+                        QuerySnapshot querySnapshot = snapshot.data;
+                        if (querySnapshot.documents.length == 0) {
+                          return Container(
+                            padding: EdgeInsets.all(25),
+                            child: Text("Nnehum anúncio!", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                          );
+                        }
+
+                        return Expanded(
+                          child: ListView.builder(
+                            itemBuilder: (_, indice){
+                              List<DocumentSnapshot> anuncios = querySnapshot.documents.toList();
+                              DocumentSnapshot documentSnapshot = anuncios[indice];
+                              Anuncio anuncio = Anuncio.fromDocumentSnapshot(documentSnapshot);
+
+                              return ItemAnuncio(
+                                anuncio: anuncio,
+                                onTapItem: (){},
+                              );
+                            },
+                            itemCount: querySnapshot.documents.length,
+                          ),
+                        );
+                        break;
+                    }
+
+                    return Container();
+                  },
                 )
               ],
             )
