@@ -1,4 +1,4 @@
-package com.example.cara_ou_coroa
+package com.carlosgabriel.cara_ou_coroa
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity
